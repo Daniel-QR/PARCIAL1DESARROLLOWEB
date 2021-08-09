@@ -33,10 +33,12 @@
 	        );
 	        // Create a new PDO instanace
 	        try{
-	            $this->dbh = new PDO($dsn, 'root', '', $options);
+				
+	            $this->dbh = new PDO($dsn, 'root', '12345678', $options);
 	        }
 	        // Catch any errors
 	        catch(PDOException $e){
+				echo $e;
 	            $this->error = $e->getMessage();
 	        }
 	    }

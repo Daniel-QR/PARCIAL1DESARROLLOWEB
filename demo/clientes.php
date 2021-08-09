@@ -1,10 +1,21 @@
+<?php
+    //ini_set('display_errors', 1);
+    //error_reporting(E_ALL);    
+
+    require_once('server/Database.php');
+    $db = new Database();
+
+    $db->query("SELECT * FROM cliente");
+    $clientes = $db->resultSet();
+    //die(json_encode($db->resultSet()));
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es-GT">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Mazer Admin Dashboard</title>
+    <title>Tienda AGUILA</title>
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -25,7 +36,7 @@
                 <div class="sidebar-header">
                     <div class="d-flex justify-content-between">
                         <div class="logo">
-                            <a href="index.html"><img src="assets/images/logo/logo.png" alt="Logo" srcset=""></a>
+                            Tienda AGUILA
                         </div>
                         <div class="toggler">
                             <a href="#" class="sidebar-hide d-xl-none d-block"><i class="bi bi-x bi-middle"></i></a>
@@ -37,25 +48,25 @@
                         <li class="sidebar-title">Menu</li>
 
                         <li class="sidebar-item  ">
-                            <a href="clientes.html" class='sidebar-link'>
+                            <a href="clientes.php" class='sidebar-link'>
                                 <i class="bi bi-grid-1x2-fill"></i>
                                 <span>Clientes</span>
                             </a>
                         </li>
                         <li class="sidebar-item  ">
-                            <a href="proveedores.html" class='sidebar-link'>
+                            <a href="proveedores.php" class='sidebar-link'>
                                 <i class="bi bi-grid-1x2-fill"></i>
                                 <span>Proveedores</span>
                             </a>
                         </li>
                         <li class="sidebar-item  ">
-                            <a href="productos.html" class='sidebar-link'>
+                            <a href="productos.php" class='sidebar-link'>
                                 <i class="bi bi-grid-1x2-fill"></i>
                                 <span>Productos</span>
                             </a>
                         </li>
                         <li class="sidebar-item  ">
-                            <a href="facturacion.html" class='sidebar-link'>
+                            <a href="facturacion.php" class='sidebar-link'>
                                 <i class="bi bi-grid-1x2-fill"></i>
                                 <span>Facturacion</span>
                             </a>
@@ -132,7 +143,7 @@
                     <div class="card">
                         <div class="card-header">
                             Clientes
-                            <a href="#" class="btn btn-success">Agregar</a>
+                            <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#aggcliente">Agregar</a>
                         </div>
                         <div class="card-body">
                             <table class="table table-striped" id="table1">
@@ -147,32 +158,121 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php foreach($clientes AS $item){ ?>
                                     <tr>
-                                        <td>Graiden</td>
-                                        <td>vehicula.aliquet@semconsequat.co.uk</td>
-                                        <td>076 4820 8838</td>
-                                        <td>Offenburg</td>
+                                        <td><?php echo $item['codigo_cliente']; ?></td>
+                                        <td><?php echo $item['nombre_cliente']; ?></td>
+                                        <td><?php echo $item['apellido_cliente']; ?></td>
+                                        <td><?php echo $item['telefono_cliente']; ?></td>
+                                        <td><?php echo $item['direccion_cliente']; ?></td>
                                         <td>
-                                            <span class="badge bg-success">Active</span>
+                                            <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#item<?php echo $item['codigo_cliente'];?>">Editar</a>
+                                            <a href="javascript:void(0)" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#item<?php echo $item['codigo_cliente'];?>-elim">Eliminar</a>
                                         </td>
-                                        <td>
-                                            <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#default">Editar</a>
-                                            <a href="javascript:void(0)" class="btn btn-danger">Eliminar</a>
-                                        </td>
+                                        <!--Basic Modal -->
+                                        <div class="modal fade text-left" id="item<?php echo $item['codigo_cliente'];?>" tabindex="-1" role="dialog"
+                                        aria-labelledby="item<?php echo $item['codigo_cliente'];?>" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable w-100" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="item<?php echo $item['codigo_cliente'];?>">Editar Registro</h5>
+                                                    <button type="button" class="close rounded-pill"
+                                                        data-bs-dismiss="modal" aria-label="Close">
+                                                        <i data-feather="x"></i>
+                                                    </button>
+                                                </div>
+                                                <form action="" method="post" id="frm-item-<?php echo $item['codigo_cliente'];?>"></form>
+                                                    <div class="modal-body">
+                                                        
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="codigo">Codigo</label>
+                                                                    <input type="number" class="form-control" id="codigo"
+                                                                        placeholder="001" value="<?php echo $item['codigo_cliente']; ?>">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="nombre">Nombre</label>
+                                                                    <input type="text" class="form-control" id="nombre"
+                                                                        placeholder="Ej. Daniel" value="<?php echo $item['nombre_cliente']; ?>">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="apellido">Apellido</label>
+                                                                    <input type="text" class="form-control" id="apellido"
+                                                                        placeholder="Ej. Quiñonez" value="<?php echo $item['apellido_cliente']; ?>">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="telefono">Telefono</label>
+                                                                    <input type="tel" class="form-control" id="telefono"
+                                                                        placeholder="Ej. 12345678" value="<?php echo $item['telefono_cliente']; ?>">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="direccion">Direccion</label>
+                                                                    <input type="text" class="form-control" id="direccion"
+                                                                        placeholder="Ej. 4-15 Col. Santa Marta" value="<?php echo $item['direccion_cliente']; ?>">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn" data-bs-dismiss="modal">
+                                                            <i class="bx bx-x d-block d-sm-none"></i>
+                                                            <span class="d-none d-sm-block">Cancelar</span>
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary ml-1"
+                                                            data-bs-dismiss="modal" id="guardar">
+                                                            <i class="bx bx-check d-block d-sm-none"></i>
+                                                            <span class="d-none d-sm-block">Guardar</span>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        <!--Basic Modal -->
+                                        <div class="modal fade text-left" id="item<?php echo $item['codigo_cliente'];?>-elim" tabindex="-1" role="dialog"
+                                        aria-labelledby="item<?php echo $item['codigo_cliente'];?>-elim" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-scrollable w-100" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="item<?php echo $item['codigo_cliente'];?>-elim">Eliminar Registro</h5>
+                                                        <button type="button" class="close rounded-pill"
+                                                            data-bs-dismiss="modal" aria-label="Close">
+                                                            <i data-feather="x"></i>
+                                                        </button>
+                                                    </div>
+                                                        
+                                                    <div class="modal-body">
+                                                        Esta seguro de eliminar este registro?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn" data-bs-dismiss="modal">
+                                                            <i class="bx bx-x d-block d-sm-none"></i>
+                                                            <span class="d-none d-sm-block">Cancelar</span>
+                                                        </button>
+                                                        <button type="submit" class="btn btn-danger ml-1"
+                                                            data-bs-dismiss="modal" id="guardar">
+                                                            <i class="bx bx-check d-block d-sm-none"></i>
+                                                            <span class="d-none d-sm-block">Si</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </tr>
+                                    <?php } ?>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </section>
-                
                 <!--Basic Modal -->
-                <div class="modal fade text-left" id="default" tabindex="-1" role="dialog"
-                aria-labelledby="myModalLabel1" aria-hidden="true">
+                <div class="modal fade text-left" id="aggcliente" tabindex="-1" role="aggcliente"
+                aria-labelledby="aggcliente" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-scrollable w-100" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="myModalLabel1">Basic Modal</h5>
+                            <h5 class="modal-title" id="aggcliente">Agregar Registro</h5>
                             <button type="button" class="close rounded-pill"
                                 data-bs-dismiss="modal" aria-label="Close">
                                 <i data-feather="x"></i>
@@ -225,17 +325,16 @@
                         </form>
                     </div>
                 </div>
-                
             </div>
             </div>
             <footer>
                 <div class="footer clearfix mb-0 text-muted">
                     <div class="float-start">
-                        <p>2021 &copy; Mazer</p>
+                        <p>2021 &copy; Daniel</p>
                     </div>
                     <div class="float-end">
-                        <p>Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a
-                                href="http://ahmadsaugi.com">A. Saugi</a></p>
+                        <p> by <a
+                                href="http://ahmadsaugi.com">Daniel Quiñonez</a></p>
                     </div>
                 </div>
             </footer>
